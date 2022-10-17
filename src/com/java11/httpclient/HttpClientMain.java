@@ -9,11 +9,15 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class HttpClientMain {
 
 	private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().build();
-	private static final Duration DURATION_TIMEOUT = Duration.ofSeconds(3);
+	private static final int TIMEOUT = 3;
+	private static final Duration DURATION_TIMEOUT = Duration.ofSeconds(TIMEOUT);
 
 	public static void main(String... args) throws IOException, InterruptedException {
 		addRepeatedTexts();
@@ -91,7 +95,7 @@ public class HttpClientMain {
 		System.out.println("Response body: " + response5.body());
 		
 		addRepeatedTexts();
-		System.out.println(" --------------POST--------------- ");
+		System.out.println(" --------------ASYNC--------------- ");
 		
 		HttpClient httpClient6 = HttpClient.newBuilder()
 				.connectTimeout(DURATION_TIMEOUT)
@@ -105,11 +109,35 @@ public class HttpClientMain {
 				.timeout(DURATION_TIMEOUT)
 				.build();
 
-		HttpResponse<String> response6 = httpClient6.send(request6, BodyHandlers.ofString());
+		try {
+			httpClient6.sendAsync(request6, BodyHandlers.ofString())
+					.thenApply(HttpResponse::body)
+					.thenAccept(System.out::println)
+					.get(TIMEOUT, TimeUnit.SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			e.printStackTrace();
+		}
 
-		System.out.println("Response headers: " + response6.headers());
-		System.out.println("Response code: " + response6.statusCode());
-		System.out.println("Response body: " + response6.body());
+		addRepeatedTexts();
+		System.out.println(" --------------POST--------------- ");
+		
+		HttpClient httpClient7 = HttpClient.newBuilder()
+				.connectTimeout(DURATION_TIMEOUT)
+				.followRedirects(Redirect.NORMAL)
+				.build();
+
+		HttpRequest request7 = HttpRequest.newBuilder()
+				.POST(BodyPublishers.ofString("{\"name\":\"Leonardo Narciso\"}"))
+				.uri(URI.create("https://www.postman-echo.com/post"))
+				.header("accept", "application/xml")
+				.timeout(DURATION_TIMEOUT)
+				.build();
+
+		HttpResponse<String> response7 = httpClient7.send(request7, BodyHandlers.ofString());
+
+		System.out.println("Response headers: " + response7.headers());
+		System.out.println("Response code: " + response7.statusCode());
+		System.out.println("Response body: " + response7.body());
 		
 		
 		
