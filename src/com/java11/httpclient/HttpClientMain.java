@@ -1,6 +1,8 @@
 package com.java11.httpclient;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,7 +19,11 @@ public class HttpClientMain {
 
 	private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().build();
 	private static final int TIMEOUT = 3;
+	private static final int TIMEOUT_FIFTEEN = 15;
 	private static final Duration DURATION_TIMEOUT = Duration.ofSeconds(TIMEOUT);
+	private static final String SOCKET_IP = "186.148.172.110";
+	private static final int SOCKET_PORT = 8181;
+	private static final Duration DURATION_TIMEOUT_FIFTEEN_SECONDS = Duration.ofSeconds(TIMEOUT_FIFTEEN);
 
 	public static void main(String... args) throws IOException, InterruptedException {
 		addRepeatedTexts();
@@ -138,6 +144,32 @@ public class HttpClientMain {
 		System.out.println("Response headers: " + response7.headers());
 		System.out.println("Response code: " + response7.statusCode());
 		System.out.println("Response body: " + response7.body());
+		
+		addRepeatedTexts();
+		System.out.println(" --------------PROXY-------------- ");
+		
+		HttpClient httpClient8 = HttpClient.newBuilder()
+				.connectTimeout(DURATION_TIMEOUT_FIFTEEN_SECONDS)
+				//.proxy(ProxySelector.of(new InetSocketAddress(SOCKET_IP, SOCKET_PORT)))
+				.followRedirects(Redirect.NORMAL)
+				.build();
+
+		HttpRequest request8 = HttpRequest.newBuilder()
+				.POST(BodyPublishers.ofString("{\"name\":\"Leonardo Narciso\"}"))
+				.uri(URI.create("https://www.postman-echo.com/post"))
+				.header("accept", "application/xml")
+				.timeout(DURATION_TIMEOUT_FIFTEEN_SECONDS)
+				.build();
+
+		try {
+			httpClient8.sendAsync(request8, BodyHandlers.ofString())
+			.thenApply(HttpResponse::body)
+			.thenAccept(System.out::println)
+			.get(TIMEOUT_FIFTEEN, TimeUnit.SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		
