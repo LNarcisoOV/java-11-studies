@@ -25,6 +25,7 @@ public class HttpClientMain {
 
 		HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
 
+		System.out.println("Response headers: " + response.headers());
 		System.out.println("Response code: " + response.statusCode());
 		System.out.println("Response body: " + response.body());
 
@@ -39,6 +40,7 @@ public class HttpClientMain {
 
 		HttpResponse<String> response2 = httpClient.send(request2, BodyHandlers.ofString());
 
+		System.out.println("Response headers: " + response2.headers());
 		System.out.println("Response code: " + response2.statusCode());
 		System.out.println("Response body: " + response2.body());
 
@@ -47,7 +49,7 @@ public class HttpClientMain {
 		addRepeatedTexts();
 		System.out.println(" --------DURATION--TIMEOUT-------- ");
 
-		HttpClient httpClient2 = HttpClient.newBuilder()
+		HttpClient httpClient4 = HttpClient.newBuilder()
 				.connectTimeout(Duration.ofSeconds(3))
 				.build();
 
@@ -57,8 +59,9 @@ public class HttpClientMain {
 				.header("accept", "application/xml")
 				.timeout(Duration.ofSeconds(3)).build();
 
-		HttpResponse<String> response4 = httpClient2.send(request4, BodyHandlers.ofString());
+		HttpResponse<String> response4 = httpClient4.send(request4, BodyHandlers.ofString());
 
+		System.out.println("Response headers: " + response4.headers());
 		System.out.println("Response code: " + response4.statusCode());
 		System.out.println("Response body: " + response4.body());
 		
@@ -66,7 +69,7 @@ public class HttpClientMain {
 		addRepeatedTexts();
 		System.out.println(" -----------REDIRECT-------------- ");
 		
-		HttpClient httpClient3 = HttpClient.newBuilder()
+		HttpClient httpClient5 = HttpClient.newBuilder()
 				.connectTimeout(Duration.ofSeconds(3))
 				.followRedirects(Redirect.NORMAL)
 				.build();
@@ -77,8 +80,9 @@ public class HttpClientMain {
 				.header("accept", "application/xml")
 				.timeout(Duration.ofSeconds(3)).build();
 
-		HttpResponse<String> response5 = httpClient3.send(request5, BodyHandlers.ofString());
+		HttpResponse<String> response5 = httpClient5.send(request5, BodyHandlers.ofString());
 
+		System.out.println("Response headers: " + response5.headers());
 		System.out.println("Response code: " + response5.statusCode());
 		System.out.println("Response body: " + response5.body());
 		
