@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 
@@ -60,6 +61,44 @@ public class HttpClientMain {
 
 		System.out.println("Response code: " + response4.statusCode());
 		System.out.println("Response body: " + response4.body());
+		
+		
+		addRepeatedTexts();
+		System.out.println(" -----------REDIRECT-------------- ");
+		
+		HttpClient httpClient3 = HttpClient.newBuilder()
+				.connectTimeout(Duration.ofSeconds(3))
+				.followRedirects(Redirect.NORMAL)
+				.build();
+
+		HttpRequest request5 = HttpRequest.newBuilder()
+				.GET()
+				.uri(URI.create("https://www.getpostman.com/"))
+				.header("accept", "application/xml")
+				.timeout(Duration.ofSeconds(3)).build();
+
+		HttpResponse<String> response5 = httpClient3.send(request5, BodyHandlers.ofString());
+
+		System.out.println("Response code: " + response5.statusCode());
+		System.out.println("Response body: " + response5.body());
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		addRepeatedTexts();
